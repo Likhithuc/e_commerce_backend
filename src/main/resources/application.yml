@@ -8,9 +8,9 @@ spring:
     name: ecommerce-backend
 
   datasource:
-    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/ecommerce_db}
-    username: ${SPRING_DATASOURCE_USERNAME:postgres}
-    password: ${SPRING_DATASOURCE_PASSWORD:Lik@2003}
+    url: jdbc:postgresql://${PGHOST:localhost}:${PGPORT:5432}/${PGDATABASE:ecommerce_db}
+    username: ${PGUSER:postgres}
+    password: ${PGPASSWORD:Lik@2003}
     driver-class-name: org.postgresql.Driver
     hikari:
       maximum-pool-size: 20
