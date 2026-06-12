@@ -5,6 +5,7 @@ import com.ecommerce.dto.response.ApiResponse;
 import com.ecommerce.dto.response.OrderResponse;
 import com.ecommerce.dto.response.PageResponse;
 import com.ecommerce.entity.User;
+import com.ecommerce.enums.OrderStatus;
 import com.ecommerce.service.OrderService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -14,6 +15,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
@@ -75,5 +77,15 @@ public class OrderController {
             @PathVariable Long id) {
         OrderResponse response = orderService.cancelOrder(user.getId(), id);
         return ResponseEntity.ok(ApiResponse.success("Order cancelled successfully", response));
+    }
+
+    @PutMapping("/admin/{id}/status")
+    @PreAuthorize("hasRole('ADMIN')")
+    @Operation(summary = "Update order status (Admin)")
+    public ResponseEntity<ApiResponse<OrderResponse>> updateOrderStatus(
+            @PathVariable Long id,
+            @RequestParam OrderStatus status) {
+        OrderResponse response = orderService.updateOrderStatus(id, status);
+        return ResponseEntity.ok(ApiResponse.success("Order status updated to " + status, response));
     }
 }

@@ -174,6 +174,24 @@ public class OrderServiceImpl implements OrderService {
         return mapToResponse(order);
     }
 
+    @Override
+    @Transactional
+    public OrderResponse updateOrderStatus(Long orderId, OrderStatus status) {
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new ResourceNotFoundException("Order", "id", orderId));
+
+        if (order.getStatus() == OrderStatus.CANCELLED) {
+            throw new BadRequestException("Cannot update status of a cancelled order");
+        }
+        if (order.getStatus() == OrderStatus.DELIVERED) {
+            throw new BadRequestException("Cannot update status of a delivered order");
+        }
+
+        order.setStatus(status);
+        order = orderRepository.save(order);
+        return mapToResponse(order);
+    }
+
     private OrderResponse mapToResponse(Order order) {
         List<OrderItemResponse> itemResponses = order.getOrderItems().stream()
                 .map(item -> OrderItemResponse.builder()

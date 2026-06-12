@@ -3,6 +3,7 @@ package com.ecommerce.service;
 import com.ecommerce.dto.request.OrderRequest;
 import com.ecommerce.dto.response.OrderResponse;
 import com.ecommerce.dto.response.PageResponse;
+import com.ecommerce.enums.OrderStatus;
 import org.springframework.data.domain.Pageable;
 
 public interface OrderService {
@@ -10,4 +11,5 @@ public interface OrderService {
     OrderResponse getOrderById(Long userId, Long orderId);
     PageResponse<OrderResponse> getUserOrders(Long userId, Pageable pageable);
     OrderResponse cancelOrder(Long userId, Long orderId);
+    OrderResponse updateOrderStatus(Long orderId, OrderStatus status);
 }
