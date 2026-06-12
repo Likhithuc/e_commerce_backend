@@ -79,6 +79,17 @@ public class OrderController {
         return ResponseEntity.ok(ApiResponse.success("Order cancelled successfully", response));
     }
 
+    @GetMapping("/admin/all")
+    @PreAuthorize("hasRole('ADMIN')")
+    @Operation(summary = "Get all orders (Admin)")
+    public ResponseEntity<ApiResponse<PageResponse<OrderResponse>>> getAllOrders(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        PageResponse<OrderResponse> response = orderService.getAllOrders(pageable);
+        return ResponseEntity.ok(ApiResponse.success(response));
+    }
+
     @PutMapping("/admin/{id}/status")
     @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Update order status (Admin)")

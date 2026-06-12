@@ -192,6 +192,24 @@ public class OrderServiceImpl implements OrderService {
         return mapToResponse(order);
     }
 
+    @Override
+    @Transactional(readOnly = true)
+    public PageResponse<OrderResponse> getAllOrders(Pageable pageable) {
+        Page<Order> orderPage = orderRepository.findAll(pageable);
+        List<OrderResponse> content = orderPage.getContent().stream()
+                .map(this::mapToResponse)
+                .toList();
+        return PageResponse.<OrderResponse>builder()
+                .content(content)
+                .page(orderPage.getNumber())
+                .size(orderPage.getSize())
+                .totalElements(orderPage.getTotalElements())
+                .totalPages(orderPage.getTotalPages())
+                .last(orderPage.isLast())
+                .first(orderPage.isFirst())
+                .build();
+    }
+
     private OrderResponse mapToResponse(Order order) {
         List<OrderItemResponse> itemResponses = order.getOrderItems().stream()
                 .map(item -> OrderItemResponse.builder()
