@@ -32,7 +32,7 @@ public class ReportServiceImpl implements ReportService {
         LocalDateTime end = LocalDateTime.parse(endDate + "T23:59:59");
 
         List<Order> orders = orderRepository.findByDateRange(start, end);
-        Double totalRevenue = orderRepository.getTotalRevenue();
+        Double totalRevenue = orderRepository.getTotalRevenueByDateRange(start, end);
         double revenue = totalRevenue != null ? totalRevenue : 0.0;
 
         Map<String, Object> data = new HashMap<>();
@@ -77,14 +77,19 @@ public class ReportServiceImpl implements ReportService {
 
     @Override
     @Transactional(readOnly = true)
-    public ReportResponse getCustomersReport() {
-        long totalCustomers = userRepository.count();
-        long totalOrders = orderRepository.count();
+    public ReportResponse getCustomersReport(String startDate, String endDate) {
+        LocalDateTime start = LocalDateTime.parse(startDate + "T00:00:00");
+        LocalDateTime end = LocalDateTime.parse(endDate + "T23:59:59");
+
+        long totalCustomers = userRepository.countByCreatedAtBetween(start, end);
+        long totalOrders = orderRepository.countByCreatedAtBetween(start, end);
 
         Map<String, Object> data = new HashMap<>();
         data.put("totalCustomers", totalCustomers);
         data.put("totalOrders", totalOrders);
         data.put("averageOrdersPerCustomer", totalCustomers == 0 ? 0.0 : (double) totalOrders / totalCustomers);
+        data.put("startDate", startDate);
+        data.put("endDate", endDate);
 
         return ReportResponse.builder()
                 .reportType("CUSTOMER_REPORT")
@@ -95,8 +100,11 @@ public class ReportServiceImpl implements ReportService {
 
     @Override
     @Transactional(readOnly = true)
-    public ReportResponse getInventoryReport() {
-        long totalProducts = productRepository.count();
+    public ReportResponse getInventoryReport(String startDate, String endDate) {
+        LocalDateTime start = LocalDateTime.parse(startDate + "T00:00:00");
+        LocalDateTime end = LocalDateTime.parse(endDate + "T23:59:59");
+
+        long totalProducts = productRepository.countByCreatedAtBetween(start, end);
         long totalCategories = categoryRepository.count();
         List<?> lowStock = inventoryRepository.findLowStockItems(10);
 
@@ -104,6 +112,8 @@ public class ReportServiceImpl implements ReportService {
         data.put("totalProducts", totalProducts);
         data.put("totalCategories", totalCategories);
         data.put("lowStockItems", (long) lowStock.size());
+        data.put("startDate", startDate);
+        data.put("endDate", endDate);
 
         return ReportResponse.builder()
                 .reportType("INVENTORY_REPORT")

@@ -41,15 +41,19 @@ public class ReportController {
 
     @GetMapping("/customers")
     @Operation(summary = "Get customers report (Admin)")
-    public ResponseEntity<ApiResponse<ReportResponse>> getCustomersReport() {
-        ReportResponse response = reportService.getCustomersReport();
+    public ResponseEntity<ApiResponse<ReportResponse>> getCustomersReport(
+            @RequestParam(defaultValue = "#{T(java.time.LocalDate).now().minusDays(30).toString()}") String startDate,
+            @RequestParam(defaultValue = "#{T(java.time.LocalDate).now().toString()}") String endDate) {
+        ReportResponse response = reportService.getCustomersReport(startDate, endDate);
         return ResponseEntity.ok(ApiResponse.success(response));
     }
 
     @GetMapping("/inventory")
     @Operation(summary = "Get inventory report (Admin)")
-    public ResponseEntity<ApiResponse<ReportResponse>> getInventoryReport() {
-        ReportResponse response = reportService.getInventoryReport();
+    public ResponseEntity<ApiResponse<ReportResponse>> getInventoryReport(
+            @RequestParam(defaultValue = "#{T(java.time.LocalDate).now().minusDays(30).toString()}") String startDate,
+            @RequestParam(defaultValue = "#{T(java.time.LocalDate).now().toString()}") String endDate) {
+        ReportResponse response = reportService.getInventoryReport(startDate, endDate);
         return ResponseEntity.ok(ApiResponse.success(response));
     }
 }
