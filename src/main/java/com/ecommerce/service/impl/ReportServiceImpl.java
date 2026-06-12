@@ -60,11 +60,11 @@ public class ReportServiceImpl implements ReportService {
 
         Map<String, Object> data = new HashMap<>();
         data.put("totalOrders", (long) orders.size());
-        data.put("pendingOrders", orderRepository.countByStatus(OrderStatus.PENDING));
-        data.put("confirmedOrders", orderRepository.countByStatus(OrderStatus.CONFIRMED));
-        data.put("shippedOrders", orderRepository.countByStatus(OrderStatus.SHIPPED));
-        data.put("deliveredOrders", orderRepository.countByStatus(OrderStatus.DELIVERED));
-        data.put("cancelledOrders", orderRepository.countByStatus(OrderStatus.CANCELLED));
+        data.put("pendingOrders", orders.stream().filter(o -> o.getStatus() == OrderStatus.PENDING).count());
+        data.put("confirmedOrders", orders.stream().filter(o -> o.getStatus() == OrderStatus.CONFIRMED).count());
+        data.put("shippedOrders", orders.stream().filter(o -> o.getStatus() == OrderStatus.SHIPPED).count());
+        data.put("deliveredOrders", orders.stream().filter(o -> o.getStatus() == OrderStatus.DELIVERED).count());
+        data.put("cancelledOrders", orders.stream().filter(o -> o.getStatus() == OrderStatus.CANCELLED).count());
         data.put("startDate", startDate);
         data.put("endDate", endDate);
 
